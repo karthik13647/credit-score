@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "credit_score": 300,
+        "monthly_income": 12000.0,
+        "debt_payments": 100000.0,
+        "loan_amount": 1000000.0,
+        "loan_term": 17,
+        "employment_status": "Employed",
+        "loan_type": "Personal Loan",
+        "down_payment": 12.0,
+        "state": "California",
+        "collateral": "Yes",
+        "eligibility": "Not Eligible",
+        "reasons": "Credit score is too low for a personal loan.; DTI ratio is too high for a personal loan."
+    },
+    {
+        "id": 2,
+        "credit_score": 300,
+        "monthly_income": 10000.0,
+        "debt_payments": 10000.0,
+        "loan_amount": 10000.0,
+        "loan_term": 12,
+        "employment_status": "Employed",
+        "loan_type": "Personal Loan",
+        "down_payment": 12.0,
+        "state": "California",
+        "collateral": "Yes",
+        "eligibility": "Not Eligible",
+        "reasons": "Credit score is too low for a personal loan.; DTI ratio is too high for a personal loan."
+    },
+    {
+        "id": 3,
+        "credit_score": 400,
+        "monthly_income": 1000.0,
+        "debt_payments": 13324.0,
+        "loan_amount": 114152.0,
+        "loan_term": 11,
+        "employment_status": "Employed",
+        "loan_type": "Mortgage Loan",
+        "down_payment": 12.0,
+        "state": "California",
+        "collateral": "Yes",
+        "eligibility": "Not Eligible",
+        "reasons": "Credit score is too low for an FHA mortgage.; DTI ratio exceeds mortgage requirements."
+    },
+    {
+        "id": 4,
+        "credit_score": 400,
+        "monthly_income": 10000.0,
+        "debt_payments": 100000.0,
+        "loan_amount": 100000.0,
+        "loan_term": 8,
+        "employment_status": "Employed",
+        "loan_type": "Mortgage Loan",
+        "down_payment": 1000.0,
+        "state": "California",
+        "collateral": "Yes",
+        "eligibility": "Not Eligible",
+        "reasons": "Credit score is too low for an FHA mortgage.; DTI ratio exceeds mortgage requirements."
+    }
+]

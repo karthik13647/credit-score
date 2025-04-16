@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Eligibility Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="result-box">
+            <h1>Loan Eligibility Result</h1>
+            <p class="subtitle">
+                Loan Type: <strong>{{ loan_type }}</strong><br>
+                Loan Amount: <strong>${{ "{:,.2f}".format(loan_amount) }}</strong>
+            </p>
+
+            {% if eligibility == "Eligible" %}
+                <h2 class="success">Congratulations! You are {{ eligibility }}.</h2>
+            {% elif eligibility == "Conditional" %}
+                <h2 class="conditional">You are Conditionally Eligible.</h2>
+            {% else %}
+                <h2 class="failure">Sorry! You are {{ eligibility }}.</h2>
+            {% endif %}
+
+            {% if reasons %}
+                <ul class="reason-list">
+                    {% for reason in reasons %}
+                        <li>{{ reason }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
