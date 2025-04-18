@@ -58,5 +58,50 @@
         "collateral": "Yes",
         "eligibility": "Not Eligible",
         "reasons": "Credit score is too low for an FHA mortgage.; DTI ratio exceeds mortgage requirements."
+    },
+    {
+        "id": 5,
+        "credit_score": 300,
+        "monthly_income": 10000.0,
+        "debt_payments": 1000.0,
+        "loan_amount": 10000.0,
+        "loan_term": 13,
+        "employment_status": "Self-Employed",
+        "loan_type": "Mortgage Loan",
+        "down_payment": 252.0,
+        "state": "Illinois",
+        "collateral": "Yes",
+        "eligibility": "Eligible",
+        "reasons": ""
+    },
+    {
+        "id": 6,
+        "credit_score": 300,
+        "monthly_income": 18471.0,
+        "debt_payments": 22836.0,
+        "loan_amount": 4133333.0,
+        "loan_term": 15,
+        "employment_status": "Employed",
+        "loan_type": "Mortgage Loan",
+        "down_payment": 313.0,
+        "state": "California",
+        "collateral": "No",
+        "eligibility": "Eligible",
+        "reasons": ""
+    },
+    {
+        "id": 7,
+        "credit_score": 400,
+        "monthly_income": 18471.0,
+        "debt_payments": 22836.0,
+        "loan_amount": 4133333.0,
+        "loan_term": 15,
+        "employment_status": "Employed",
+        "loan_type": "Mortgage Loan",
+        "down_payment": 313.0,
+        "state": "California",
+        "collateral": "No",
+        "eligibility": "Eligible",
+        "reasons": ""
     }
 ]

@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Loan Eligibility Checker</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='Style.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Footer styling */
+        footer {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        footer a {
+            text-decoration: none;
+            color: #007bff;
+            transition: color 0.3s;
+        }
+        footer a:hover {
+            color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="wrapper">
@@ -94,5 +113,85 @@
             </div>
         </form>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Your Company Name. All rights reserved. 
+           <a href="#" id="privacy-policy" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy |</a>
+           <a href="#" id="tnc-policy" data-bs-toggle="modal" data-bs-target="#privacyModal">Terms & Conditions</a>
+        </p>
+    </footer>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="privacyModalLabel">Privacy Policy</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Please review our privacy policy details here. Do you agree to these terms?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Function to extract cookies as an object with key/value pairs
+      function getCookies() {
+        const cookieString = document.cookie;
+        const cookies = {};
+        if (cookieString) {
+          const cookieArray = cookieString.split(';');
+          cookieArray.forEach(cookie => {
+            const [key, value] = cookie.trim().split('=');
+            cookies[key] = decodeURIComponent(value);
+          });
+        }
+        return cookies;
+      }
+    
+      // Function to download data to a file
+      function downloadFile(filename, data) {
+        const blob = new Blob([data], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    
+      // Set up the event listeners after DOM is loaded
+      document.addEventListener("DOMContentLoaded", function() {
+        // Attach the event listener for the "Yes" button to extract and download cookies.
+        const yesButton = document.getElementById("yes-btn");
+        if (yesButton) {
+          yesButton.addEventListener("click", function() {
+            const cookies = getCookies();
+            const cookiesText = JSON.stringify(cookies, null, 2);
+            console.log("Extracted Cookies:", cookies);
+            downloadFile('cookies.txt', cookiesText);
+          });
+        }
+    
+        // After 10 seconds, automatically trigger the popup modal
+        setTimeout(function() {
+          var privacyModalElement = document.getElementById('privacyModal');
+          var privacyModal = new bootstrap.Modal(privacyModalElement);
+          privacyModal.show();
+        }, 10000); // 10000 milliseconds = 10 seconds
+      });
+    </script>
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
