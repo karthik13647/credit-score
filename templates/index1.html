@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Score Testing System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.cancel {
+            background-color: #f44336;
+        }
+        button.cancel:hover {
+            background-color: #d32f2f;
+        }
+        input[type=text] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .details {
+            cursor: pointer;
+            color: #0066cc;
+            text-decoration: underline;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 700px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Credit Score Testing System</h1>
+    
+    <div class="container">
+        <h2>Start New Test</h2>
+        <div>
+            <label for="offerIdInput">Offer ID:</label>
+            <input type="text" id="offerIdInput" placeholder="Enter offer ID" required>
+        </div>
+        <button id="startTestButton">Start Test</button>
+        <div id="startTestStatus" class="status"></div>
+    </div>
+    
+    <div class="container">
+        <h2>Active Tests</h2>
+        <button id="refreshTestsButton">Refresh</button>
+        <div id="activeTestsContainer">
+            <table id="activeTestsTable">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Offer ID</th>
+                        <th>Start Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="activeTestsBody">
+                    <!-- Active tests will be displayed here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>View Test Results</h2>
+        <div>
+            <label for="resultOfferIdInput">Offer ID:</label>
+            <input type="text" id="resultOfferIdInput" placeholder="Enter offer ID to view results">
+        </div>
+        <button id="viewResultsButton">View Results</button>
+        <div id="resultsContainer">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Response #</th>
+                        <th>Credit Score</th>
+                        <th>Risk Level</th>
+                        <th>Decision</th>
+                        <th>Postback URL</th>
+                        <th>Status</th>
+                        <th>Timestamp</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsBody">
+                    <!-- Results will be displayed here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for response details -->
+    <div id="responseModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Response Details</h2>
+            <pre id="responseDetails"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Start a new test
+        document.getElementById('startTestButton').addEventListener('click', async () => {
+            const offerId = document.getElementById('offerIdInput').value.trim();
+            const statusElement = document.getElementById('startTestStatus');
+            
+            if (!offerId) {
+                statusElement.textContent = 'Please enter an offer ID';
+                statusElement.className = 'status error';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/start-test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ offer_id: offerId })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusElement.textContent = `Test started! Test ID: ${data.test_id}. Duration: ${data.expected_duration_minutes} minutes.`;
+                    statusElement.className = 'status success';
+                    document.getElementById('offerIdInput').value = '';
+                    loadActiveTests();
+                } else {
+                    statusElement.textContent = `Error: ${data.error}`;
+                    statusElement.className = 'status error';
+                }
+            } catch (error) {
+                statusElement.textContent = `Error: ${error.message}`;
+                statusElement.className = 'status error';
+            }
+        });
+        
+        // Load active tests
+        async function loadActiveTests() {
+            try {
+                const response = await fetch('/api/tests');
+                const tests = await response.json();
+                
+                const tbody = document.getElementById('activeTestsBody');
+                tbody.innerHTML = '';
+                
+                if (Object.keys(tests).length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="4" style="text-align: center;">No active tests</td>';
+                    tbody.appendChild(row);
+                    return;
+                }
+                
+                for (const [testId, testInfo] of Object.entries(tests)) {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${testId}</td>
+                        <td>${testInfo.offer_id}</td>
+                        <td>${new Date(testInfo.start_time).toLocaleString()}</td>
+                        <td>
+                            <button class="cancel" data-test-id="${testId}">Cancel</button>
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                }
+                
+                // Add event listeners to cancel buttons
+                document.querySelectorAll('.cancel').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const testId = e.target.getAttribute('data-test-id');
+                        await cancelTest(testId);
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading active tests:', error);
+            }
+        }
+        
+        // Cancel a test
+        async function cancelTest(testId) {
+            try {
+                const response = await fetch(`/api/cancel-test/${testId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    loadActiveTests();
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
+        
+        // View test results
+        document.getElementById('viewResultsButton').addEventListener('click', async () => {
+            const offerId = document.getElementById('resultOfferIdInput').value.trim();
+            
+            if (!offerId) {
+                alert('Please enter an offer ID');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/test-results/${offerId}`);
+                const results = await response.json();
+                
+                const tbody = document.getElementById('resultsBody');
+                tbody.innerHTML = '';
+                
+                if (results.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="8" style="text-align: center;">No results found for this offer ID</td>';
+                    tbody.appendChild(row);
+                    return;
+                }
+                
+                results.sort((a, b) => a.response_number - b.response_number);
+                
+                for (const result of results) {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${result.response_number}</td>
+                        <td>${result.data.credit_score}</td>
+                        <td>${result.data.risk_level}</td>
+                        <td>${result.data.decision}</td>
+                        <td>${result.postback_url ? result.postback_url.substring(0, 50) + '...' : 'N/A'}</td>
+                        <td>${result.postback_status || 'N/A'}</td>
+                        <td>${new Date(result.data.timestamp).toLocaleString()}</td>
+                        <td><span class="details" data-result='${JSON.stringify(result)}'>View</span></td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                }
+                
+                // Add event listeners to detail links
+                document.querySelectorAll('.details').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        const resultData = JSON.parse(e.target.getAttribute('data-result'));
+                        document.getElementById('responseDetails').textContent = JSON.stringify(resultData, null, 2);
+                        document.getElementById('responseModal').style.display = 'block';
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading results:', error);
+                alert(`Error: ${error.message}`);
+            }
+        });
+        
+        // Modal close button
+        document.querySelector('.close').addEventListener('click', () => {
+            document.getElementById('responseModal').style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('responseModal')) {
+                document.getElementById('responseModal').style.display = 'none';
+            }
+        });
+        
+        // Refresh active tests
+        document.getElementById('refreshTestsButton').addEventListener('click', loadActiveTests);
+        
+        // Load active tests on page load
+        document.addEventListener('DOMContentLoaded', loadActiveTests);
+    </script>
+</body>
+</html>
